@@ -1,0 +1,36 @@
+- name: Server Configuration
+  hosts: localhost
+  vars_files:
+    - netm4ul.cfg
+
+
+  roles:
+    - { role: scaleway}
+
+
+  #post_tasks:
+  # - block:
+  #  - name: Localhost post-tasks
+  #    include_tasks: playbooks/post.yml
+
+
+- name: Configure Master Node Server
+  hosts: master
+  vars_files:
+      - netm4ul.cfg
+
+  roles:
+    - { role: master_server_setup}
+    - { role: master_node_setup}
+
+
+
+
+- name: Configure Client Nodes
+  hosts: nodes
+    vars_files:
+        - netm4ul.cfg
+
+    roles:
+      - { role: node_server_setup}
+      - { role: node_setup}
