@@ -1,6 +1,11 @@
 # netm4ul-ansible
 Deployement script of netm4ul
 
+Scaleway Q&D :
+
+Put your creds in auto_deploy.sh script, then hit ./auto_deploy
+
+
 Links :
 
     *https://aws.amazon.com/fr/blogs/apn/getting-started-with-ansible-and-dynamic-amazon-ec2-inventory-management/
