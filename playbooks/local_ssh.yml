@@ -1,0 +1,12 @@
+---
+
+- name: Ensure the local ssh directory exist
+  file:
+    path: ~/.ssh/
+    state: directory
+
+- name: Copy the netm4ul ssh key to the local ssh directory
+  copy:
+    src: "{{ SSH_keys.private }}"
+    dest: ~/.ssh/netm4ul.pem
+    mode: '0600'

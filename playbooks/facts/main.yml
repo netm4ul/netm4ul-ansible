@@ -1,0 +1,20 @@
+---
+
+- name: Gather Facts
+  setup:
+
+- name: Ensure the netm4ul ssh key exist on the server
+  authorized_key:
+    user: "{{ ansible_ssh_user }}"
+    state: present
+    key: "{{ lookup('file', '{{ SSH_keys.public }}') }}"
+  tags: [ 'cloud' ]
+
+- name: Check if IPv6 configured
+  set_fact:
+    ipv6_support: "{% if ansible_default_ipv6['gateway'] is defined %}true{% else %}false{% endif %}"
+
+- name: Set facts if the deployment in a cloud
+  set_fact:
+    cloud_deployment: true
+  tags: ['cloud']

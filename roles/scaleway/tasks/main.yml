@@ -1,7 +1,4 @@
-# source : https://developer.scaleway.com
-
 - block:
-
   - name: Check if server exists
     uri:
       url: "https://cp-{{ netm4ul_region }}.scaleway.com/servers"
@@ -15,7 +12,7 @@
   - name: Set server id as a fact
     set_fact:
       server_id: "{{ item.id }}"
-    no_log: true
+    no_log: false
     when: netm4ul_server_name == item.name
     with_items: "{{ scaleway_servers.json.servers }}"
 
@@ -34,7 +31,7 @@
     - name: Set organization id as a fact
       set_fact:
         organization_id: "{{ item.id }}"
-      no_log: true
+      no_log: false
       when: scaleway_organization == item.name
       with_items: "{{ scaleway_organizations.json.organizations }}"
 
@@ -51,7 +48,7 @@
     - name: Set image id as a fact
       set_fact:
         image_id: "{{ item.id }}"
-      no_log: true
+      no_log: false
       when:
         - cloud_providers.scaleway.image in item.name
         - cloud_providers.scaleway.arch == item.arch
@@ -94,7 +91,7 @@
       status_code: 202
       body_format: json
     ignore_errors: true
-    no_log: true
+    no_log: false
 
   - name: Wait for the server to become running
     uri:
@@ -117,14 +114,14 @@
   - name: Add new instance to host group
     add_host:
       hostname: "{{ cloud_instance_ip }}"
-      groupname: netm4ul-host
+      groupname: master
       ansible_ssh_user: root
       ansible_python_interpreter: "/usr/bin/python2.7"
       ansible_ssh_private_key_file: "{{ SSH_keys.private }}"
       cloud_provider: scaleway
 
   rescue:
-  - debug: var=fail
+  - debug: var=fail_hint
     tags: always
   - fail:
     tags: always

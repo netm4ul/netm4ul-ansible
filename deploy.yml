@@ -1,36 +1,70 @@
-- name: Server Configuration
+- name: Configure the Master
   hosts: localhost
+  tags: Netm4ul
   vars_files:
-    - netm4ul.cfg
+    - config.cfg
 
+  pre_tasks:
+    - block:
+      - name: Local pre-tasks
+        include_tasks: playbooks/local.yml
+        tags: [ 'always' ]
+
+      - name: Local pre-tasks
+        include_tasks: playbooks/local_ssh.yml
+        become: false
+        when: Deployed_By_Netm4ul is defined and Deployed_By_Netm4ul == "Y"
+        tags: [ 'local' ]
+      rescue:
+        - debug: var=fail_hint
+          tags: always
+        - fail:
+          tags: always
 
   roles:
-    - { role: scaleway }
+    - { role: scaleway, tags: ['scaleway'] }
 
+  post_tasks:
+    - block:
+      - name: Local post-tasks
+        include_tasks: playbooks/post.yml
+        become: false
+        tags: [ 'cloud' ]
+      rescue:
+        - debug: var=fail_hint
+          tags: always
+        - fail:
+          tags: always
 
-  #post_tasks:
-  # - block:
-  #  - name: Localhost post-tasks
-  #    include_tasks: playbooks/post.yml
+- name: Configure the server and install required software
+  hosts: master
+  gather_facts: false
+  tags: Netm4ul
+  become: true
+  vars_files:
+    - config.cfg
 
+  pre_tasks:
+    - block:
+      - name: Common pre-tasks
+        include_tasks: playbooks/common.yml
+        tags: [ 'scaleway' ]
+      rescue:
+        - debug: var=fail_hint
+          tags: always
+        - fail:
+          tags: always
 
-#- name: Configure Master Node Server
-#  hosts: master
-#  vars_files:
-#      - netm4ul.cfg
+  post_tasks:
+    - block:
+      - debug:
+          msg:
+            - "{{ congrats.common.split('\n') }}"
+            - "    {% if cloud_deployment is defined %}{{ congrats.ssh_access }}{% endif %}"
+        tags: always
 
-#  roles:
- #   - { role: master_server_setup}
- #   - { role: master_node_setup}
-
-
-
-
-#- name: Configure Client Nodes
-#  hosts: nodes
-#  vars_files:
-#    - netm4ul.cfg
-
-#  roles:
-#    - { role: node_server_setup}
-#    - { role: node_setup}
+      rescue:
+        - debug: var=fail_hint
+          tags: always
+        - fail:
+          tags: always

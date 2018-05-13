@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+set -e
+
+auto () {
+
+    scaleway_auth_token="[Your Token]"
+    scaleway_organization="[Your Billing Name]"
+    netm4ul_server_name="netm4ul.1"
+    netm4ul_region="1"
+    region="par1"
+
+    ROLES="scaleway cloud"
+    EXTRA_VARS="scaleway_auth_token=$scaleway_auth_token scaleway_organization=\"$scaleway_organization\" netm4ul_server_name=$netm4ul_server_name netm4ul_region=$region"
+
+    ansible-playbook -vvv deploy.yml -t "${ROLES// /,}" -e "${EXTRA_VARS}"
+}
+
+auto
