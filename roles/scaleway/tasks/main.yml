@@ -124,7 +124,7 @@
       cloud_provider: scaleway
 
   rescue:
-  - debug: var=fail_hint
+  - debug: var=fail
     tags: always
   - fail:
     tags: always

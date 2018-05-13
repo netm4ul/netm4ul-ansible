@@ -1,4 +1,4 @@
-#! /usr/bin/env sh
+#! /usr/bin/env bash
 
 set -e
 
@@ -11,11 +11,7 @@ ec2 () {
 
 scaleway () {
 
-    read -p "
-    Enter your auth token (https://www.scaleway.com/docs/generate-an-api-token/)
-    $ALT_PROMPT
-    [...]: " -rs scaleway_auth_token
-
+    read -p "Enter your auth token (https://www.scaleway.com/docs/generate-an-api-token/) $ALT_PROMPT ...]: " -rs scaleway_auth_token
 
     read -p "
     Enter your organization name (https://cloud.scaleway.com/#/billing)
@@ -29,7 +25,7 @@ scaleway () {
         2.   ams1           Amsterdam
         Enter the number of your desired region:
         [1]: " -r netm4ul_region
-    netm4ul_region=${netm4ul_region:-1}
+    readonly netm4ul_region=${netm4ul_region:-1}
     case "$netm4ul_region" in
         1) region="par1" ;;
         2) region="ams1" ;;
@@ -38,13 +34,12 @@ scaleway () {
     ROLES="scaleway"
 }
 
-
 own_server () {
     read -p " Enter the IP address of your master node: (or use localhost for local installation) [localhost]: " -r server_ip
-    server_ip=${server_ip:-localhost}
+    readonly server_ip=${server_ip:-localhost}
 
     read -p "What user should we use to login on the server? (note: passwordless login required, or ignore if you're deploying to localhost) [root]: " -r server_user
-    server_user=${server_user:-root}
+    readonly server_user=${server_user:-root}
 
     if [ "x${server_ip}" = "xlocalhost" ]; then
         myip=""
@@ -53,6 +48,12 @@ own_server () {
     fi
 
     ROLES="local master"
+}
+
+deploy () {
+
+    ansible-playbook -vv deploy.yml -t "${ROLES// /,}"
+
 }
 
 netm4ul_provisioning () {
@@ -73,6 +74,8 @@ netm4ul_provisioning () {
     *) exit 1 ;;
   esac
 
-  additional_roles
+  # run poney
   deploy
 }
+
+netm4ul_provisioning
