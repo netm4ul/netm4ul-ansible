@@ -1,3 +1,6 @@
+---
+
+# Configure loclahost Operator and Spawn Master Node
 - name: Configure the Master
   hosts: localhost
   tags: Netm4ul
@@ -23,6 +26,8 @@
 
   roles:
     - { role: scaleway, tags: ['scaleway'] }
+    - { role: setup, tags: ['server'] }
+    - { role: master, tags: ['master'] }
 
   post_tasks:
     - block:
@@ -36,6 +41,7 @@
         - fail:
           tags: always
 
+# Install needed on
 - name: Configure the server and install required software
   hosts: master
   gather_facts: false
@@ -68,3 +74,11 @@
           tags: always
         - fail:
           tags: always
+
+
+
+
+# Spawn and configure Master
+
+
+# Spawn and configure nodes

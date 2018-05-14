@@ -35,14 +35,6 @@
   - name: Include unatteded upgrades configuration
     include_tasks: unattended-upgrades.yml
 
-  - name: Disable MOTD on login and SSHD
-    replace: dest="{{ item.file }}" regexp="{{ item.regexp }}" replace="{{ item.line }}"
-    with_items:
-      - { regexp: '^session.*optional.*pam_motd.so.*', line: '# MOTD DISABLED', file: '/etc/pam.d/login' }
-      - { regexp: '^session.*optional.*pam_motd.so.*', line: '# MOTD DISABLED', file: '/etc/pam.d/sshd' }
-  tags:
-    - cloud
-
 - name: Install system specific tools
   package: name="{{ item }}" state=present
   with_items:
@@ -75,34 +67,5 @@
     - always
 
 - meta: flush_handlers
-  tags:
-    - always
-
-- name: Check apparmor support
-  shell: apparmor_status
-  ignore_errors: yes
-  register: apparmor_status
-
-- set_fact:
-    apparmor_enabled: true
-  when: '"profiles are in enforce mode" in apparmor_status.stdout'
-
-- set_fact:
-    tools:
-      - git
-      - screen
-      - apparmor-utils
-      - uuid-runtime
-      - coreutils
-      - iptables-persistent
-      - cgroup-tools
-      - openssl
-    sysctl:
-      - item: net.ipv4.ip_forward
-        value: 1
-      - item: net.ipv4.conf.all.forwarding
-        value: 1
-      - item: net.ipv6.conf.all.forwarding
-        value: 1
   tags:
     - always
