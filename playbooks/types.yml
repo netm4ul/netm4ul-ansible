@@ -1,0 +1,28 @@
+---
+
+# This is the play for the master
+- hosts: master
+
+  tasks:
+  - name: Do common tasks on master
+
+  - name: Build PKI if necessary
+
+
+  - name: Retrieve Cert and Keys to operator
+
+
+  - name: Start Netm4ul Server
+
+
+
+
+# This is the play for the nodes
+- hosts: nodes
+
+  tasks:
+  - name: Do common tasks on nodes
+
+  - name: Get corresponding cert/key and sent it to node
+
+  - name: Start Netm4ul node

@@ -16,7 +16,7 @@
       - name: Local pre-tasks
         include_tasks: playbooks/local_ssh.yml
         become: false
-        when: Deployed_By_Netm4ul is defined and Deployed_By_Netm4ul == "Y"
+        # when: Deployed_By_Netm4ul is defined and Deployed_By_Netm4ul == "Y"
         tags: [ 'local' ]
       rescue:
         - debug: var=fail_hint
@@ -26,8 +26,6 @@
 
   roles:
     - { role: scaleway, tags: ['scaleway'] }
-    - { role: setup, tags: ['server'] }
-    - { role: master, tags: ['master'] }
 
   post_tasks:
     - block:
@@ -74,11 +72,3 @@
           tags: always
         - fail:
           tags: always
-
-
-
-
-# Spawn and configure Master
-
-
-# Spawn and configure nodes
