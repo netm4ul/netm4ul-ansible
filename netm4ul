@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+
+set -e
+
+if [ -z ${VIRTUAL_ENV+x} ]
+then
+	ACTIVATE_SCRIPT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/env/bin/activate"
+	if [ -f "$ACTIVATE_SCRIPT" ]
+	then
+		source $ACTIVATE_SCRIPT
+	else
+		echo "$ACTIVATE_SCRIPT not found.  Did you follow documentation to install dependencies?"
+		exit 1
+	fi
+fi
+
+prefix="client_"
+separator=";"
+
+auto () {
+
+    scaleway_auth_token="[YOUR API KEY]"
+    scaleway_organization="[YOUR BILLING NAME]"
+    netm4ul_server_name="netm4ul.master.1"
+
+    # Generate node list
+    netm4ul_number_nodes=5
+    netm4ul_nodes=""
+    for (( i = 1 ; i <= $netm4ul_number_nodes ; i++ ))
+        do
+            netm4ul_nodes=${netm4ul_nodes}${prefix}${i}${separator}
+        done
+
+    netm4ul_region="1"
+    region="par1"
+
+    ROLES="scaleway cloud"
+    EXTRA_VARS="scaleway_auth_token=$scaleway_auth_token scaleway_organization=\"$scaleway_organization\" netm4ul_server_name=$netm4ul_server_name netm4ul_region=$region netm4ul_nodes=$netm4ul_nodes"
+
+    ansible-playbook -vvvvv deploy.yml -t "${ROLES// /,}" -e "${EXTRA_VARS}"
+}
+
+auto
+
+
+# ssh-keygen -C netm4ul@ssh -t 25519 -f configs/netm4ul.pem -q -N ""
