@@ -1,7 +1,12 @@
 ---
 
 - name: Pull project from git
-  git: repo={{ repo_url }} dest={{ app_dir }} version={{ app_version }}
+
+  git:
+    repo: 'https://github.com/netm4ul/netm4ul.git'
+    dest: ~/
+    clone: yes
+    version: develop
 
 - name: Install Docker and Docker Compose
   block:

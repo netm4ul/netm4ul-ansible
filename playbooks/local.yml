@@ -21,7 +21,7 @@
 
 - name: Ensure the dynamic inventory exists
   blockinfile:
-    dest: configs/inventory.dynamic
+    dest: session/inventory.dynamic
     marker: "# {mark} NETM4UL MANAGED BLOCK"
     create: true
     block: |

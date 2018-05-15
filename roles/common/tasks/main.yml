@@ -17,6 +17,9 @@
       tags:
         - always
 
+    - name: Install project
+      include_tasks: nodes.yml
+
     - meta: flush_handlers
   rescue:
     - debug: var=fail_hint
