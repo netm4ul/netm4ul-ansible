@@ -69,7 +69,7 @@
           tags:
             - Environment:netm4ul
             - AUTHORIZED_KEY={{ lookup('file', SSH_keys.public)|regex_replace(' ', '_') }}
-          enable_ipv6: true
+          enable_ipv6: false
         status_code: 201
         body_format: json
       register: netm4ul_instance

@@ -1,35 +1,36 @@
 ---
+- block:
+  - name: install necessary things
+    apt: name={{ item }} update_cache=yes state=latest
+    with_items:
+      - git
 
-- name: Pull project from git
+  - name: Verify if we need to redownload and execute everythin
 
-  git:
-    repo: 'https://github.com/netm4ul/netm4ul.git'
-    dest: ~/
-    clone: yes
-    version: develop
+  - name: Pull project from git
+    git:
+      repo: 'https://github.com/netm4ul/netm4ul.git'
+      dest: ~/netm4ul/
+      clone: yes
+      version: master
 
-- name: Install Docker and Docker Compose
-  block:
-    - name: Download Docker
-      get_url:
-        url: https://get.docker.com
-        dest: ~/docker.sh
-        mode: 0700
+  - name: Install Docker and Docker Compose
+    block:
+      - name: Download Docker
+        get_url:
+          url: https://get.docker.com
+          dest: ~/docker.sh
+          mode: 0700
+        register: docker_dl_result
 
-    - name: Install Docker
-      shell : ~/docker.sh
+      - name: Install Docker
+        shell : ~/docker.sh
+        when: docker_dl_result is succeeded
+        register: docker_install_result
 
-    - name: Get uname -s
-      raw: uname -s
-      register: system_uname_s
-
-    - name: Get uname -m
-      raw: uname -m
-      register: system_uname_m
-
-    - name: Download Docker Compose
-      get_url:
-        url: https://github.com/docker/compose/releases/download/1.21.2/docker-compose-"{{ item.s.stdout }}"-"{{ item.m.stdout }}" -o
-        dest: /usr/local/bin/docker-compose
-        mode: 0700
-      with_items : { s: system_uname_s, m: system_uname_m }
+      - name: Download Docker Compose
+        get_url:
+          url: https://github.com/docker/compose/releases/download/1.21.2/docker-compose-Linux-x86_64
+          dest: /usr/local/bin/docker-compose
+          mode: 0700
+        when: docker_install_result is succeeded

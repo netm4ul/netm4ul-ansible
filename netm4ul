@@ -21,7 +21,7 @@ auto () {
 
     scaleway_auth_token="[YOUR API KEY]"
     scaleway_organization="[YOUR BILLING NAME]"
-    netm4ul_server_name="netm4ul.master.1"
+    netm4ul_server_name="netm4ul.master.2"
 
     # Generate node list
     netm4ul_number_nodes=5
@@ -40,6 +40,25 @@ auto () {
     ansible-playbook -vvvvv deploy.yml -t "${ROLES// /,}" -e "${EXTRA_VARS}"
 }
 
+install_pip () {
+    apt install python-pip
+}
+
+install_ansible () {
+    pip install ansible
+}
+
+update () {
+    apt update && apt upgrade
+}
+
+install_deps () {
+    update
+    install_pip
+    install_ansible
+}
+
+#install_deps
 auto
 
 

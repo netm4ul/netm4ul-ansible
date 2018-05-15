@@ -8,4 +8,4 @@
   include_tasks: ubuntu.yml
   when: '"Ubuntu" in OS.stdout'
 
-- include_tasks: facts/main.yml
+# - include_tasks: facts/main.yml

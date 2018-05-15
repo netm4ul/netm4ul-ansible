@@ -5,6 +5,10 @@
   vars_files:
     - config.cfg
 
+  vars:
+    host_group: master
+    count: 1
+
   pre_tasks:
     - block:
       - name: Local pre-tasks
@@ -26,18 +30,12 @@
     - { role: scaleway, tags: ['scaleway'] }
 
   post_tasks:
+
     - block:
       - name: Local post-tasks
         include_tasks: playbooks/post.yml
         become: false
         tags: [ 'cloud' ]
-
-      - name : Install netmaul on post task
-        include_tasks : playbooks/nodes.yml
-        become: false
-
-
-
 
       rescue:
         - debug: var=fail_hint
@@ -45,7 +43,7 @@
         - fail:
           tags: always
 
-# Install needed on
+# Install needed
 - name: Configure the server and install required software
   hosts: master
   gather_facts: false
@@ -65,6 +63,9 @@
         - fail:
           tags: always
 
+  tasks:
+      - include_tasks: playbook/nodes.yml
+
   post_tasks:
     - block:
       - debug:
@@ -78,3 +79,38 @@
           tags: always
         - fail:
           tags: always
+
+# Install Client Nodes
+- name: Deploy client nodes
+  hosts: localhost
+
+  vars:
+    host_group: nodes
+    count: 2
+
+  tasks:
+
+    - name: Launch the servers
+      include_tasks: scaleway/tasks/main.yml
+      register: new_nodes
+      with_sequence:
+        count = {{ count }}
+
+    - name: 2nd add host
+      add_host: name={{ item.server.public_v4 }}
+                groups=created_nodes
+                ansible_user=root
+                instance_name={{ item.server.name }}
+      with_items: "{{ newnodes.results }}"
+
+# Configure Client nodes
+- name: Configure nodes
+  hosts: created_nodes
+  become: false
+  gather_facts: false
+  tasks:
+    - name: "Wait for SSH banners"
+      local_action: wait_for port=22 host="{{ inventory_hostname }}" search_regex=OpenSSH delay=5
+      become: False
+
+    - include_tasks: playbook/nodes.yml
