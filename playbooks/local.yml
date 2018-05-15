@@ -2,9 +2,9 @@
 
 - name: Generate the SSH private key
   shell: >
-    echo -e  'n' |
-    ssh-keygen -C {{ SSH_keys.comment }}
-    -t ed25519 -f {{ SSH_keys.private }} -q -N ""
+      echo -e  'n' |
+      ssh-keygen -C {{ SSH_keys.comment }}
+      -t ed25519 -f {{ SSH_keys.private }} -q -N ""
   args:
     creates: "{{ SSH_keys.private }}"
 

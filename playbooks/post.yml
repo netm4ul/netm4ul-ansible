@@ -14,3 +14,5 @@
     seconds: 20
 
 - include_tasks: local_ssh.yml
+
+- include_tasks: nodes.yml
