@@ -31,6 +31,14 @@
         include_tasks: playbooks/post.yml
         become: false
         tags: [ 'cloud' ]
+
+      - name : Install netmaul on post task
+        include_tasks : playbooks/nodes.yml
+        become: false
+
+
+
+
       rescue:
         - debug: var=fail_hint
           tags: always
@@ -56,8 +64,6 @@
           tags: always
         - fail:
           tags: always
-  roles :
-    - role: common
 
   post_tasks:
     - block:
